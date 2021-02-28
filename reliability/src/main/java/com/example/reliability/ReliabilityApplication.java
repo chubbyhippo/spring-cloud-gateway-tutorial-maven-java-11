@@ -10,4 +10,5 @@ public class ReliabilityApplication {
 		SpringApplication.run(ReliabilityApplication.class, args);
 	}
 
+
 }
