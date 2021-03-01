@@ -6,6 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,12 +16,10 @@ import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 import reactor.core.publisher.Flux;
 
-import java.awt.*;
 import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
 @SpringBootApplication
@@ -55,7 +54,7 @@ class WebSocketConfiguration {
     private final ObjectMapper objectMapper;
 
     @SneakyThrows
-    private String from (Customer customer) {
+    private String from(Customer customer) {
         return this.objectMapper.writeValueAsString(customer);
     }
 
@@ -113,8 +112,12 @@ class ReliabilityRestController {
 
         }).get();
 
-        if (result<5) {
-           return
+        if (result < 5) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build();
+        } else {
+            return ResponseEntity.ok(Map.of("message", "good job, " + id +
+                    ", you did it on try # " + countOfErrors
+            ));
         }
     }
 
